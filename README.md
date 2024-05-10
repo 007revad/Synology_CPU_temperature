@@ -1,2 +1,2 @@
-# Synology_CPU_temp
+# Synology CPU temperature
 Get Synology NAS CPU temperature via SSH
