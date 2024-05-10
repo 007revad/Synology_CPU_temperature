@@ -26,6 +26,22 @@ Works for Intel and AMD CPUs in DSM 7 and DSM 6
 sudo -s /volume1/scripts/syno_cpu_temp.sh
 ```
 
+**Note:** Replace /volume1/scripts/ with the path to where the script is located.
+
+### Troubleshooting
+
+If the script won't run check the following:
+
+1. If the path to the script contains any spaces you need to enclose the path/scriptname in double quotes:
+   ```YAML
+   sudo -s "/volume1/my scripts/syno_cpu_temp.sh"
+   ```
+2. Make sure you unpacked the zip or rar file that you downloaded and are trying to run the syno_cpu_temp.sh file.
+3. Set the syno_cpu_temp.sh file as executable:
+   ```YAML
+   sudo chmod +x "/volume1/scripts/syno_cpu_temp.sh"
+   ```
+
 -----
 ### Screenshots
 
