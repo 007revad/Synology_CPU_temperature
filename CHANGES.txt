@@ -1,2 +1,9 @@
+v2.0.3
+- Added optional logging so the script can be scheduled.
+  - Enable log and set log_directory in included syno_cpu_temp.config
+- Added support for models with multiple CPUs.
+- Added check if there's a newer version of the script available.
+- Improved formatting of output.
+
 v1.0.1
 - First release.
