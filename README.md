@@ -22,13 +22,37 @@ If you schedule the script in Task Scheduler you should enable logging and set t
 2. Save the download zip file to a folder on the Synology.
 3. Unzip the zip file.
 
-### To run the script via SSH
+### How to run the script via SSH
+
+#### You can run the script via SSH
 
 [How to enable SSH and login to DSM via SSH](https://kb.synology.com/en-global/DSM/tutorial/How_to_login_to_DSM_with_root_permission_via_SSH_Telnet)
 
 ```YAML
 /volume1/scripts/syno_cpu_temp.sh
 ```
+
+**Note:** Replace /volume1/scripts/ with the path to where the script is located.
+
+#### Or you can schedule the script in Synology's Task Scheduler
+
+1. See <a href=how_to_schedule.md/>How to schedule a script in Synology Task Scheduler</a>
+2. Enable log and set log_directory in the included syno_cpu_temp.config
+    - syno_cpu_temp.config needs to be in the same folder as syno_cpu_temp.sh
+
+### Troubleshooting
+
+If the script won't run check the following:
+
+1. If the path to the script contains any spaces you need to enclose the path/scriptname in double quotes:
+   ```YAML
+   "/volume1/my scripts/syno_cpu_temp.sh"
+   ```
+2. Make sure you unpacked the zip or rar file that you downloaded and are trying to run the syno_cpu_temp.sh file.
+3. Set the syno_cpu_temp.sh file as executable:
+   ```YAML
+   sudo chmod +x "/volume1/scripts/syno_cpu_temp.sh"
+   ```
 
 -----
 ### Screenshots
