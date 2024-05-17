@@ -87,6 +87,8 @@ if [[ ${Log,,} == "yes" ]]; then
     if [[ ! -f "$Log_File" ]]; then
         echo "$script $scriptver" > "$Log_File"
         echo -e "${model} DSM $productversion-$buildnumber$smallfix $buildphase" >> "$Log_File"
+        # Log CPU model
+        grep 'model name' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs >> "$Log_File"
     fi
 fi
 
@@ -143,7 +145,7 @@ if [[ ${vendor,,} != "intel" ]] && [[ ${vendor,,} != "amd" ]]; then
 fi
 
 # Show CPU model
-grep 'model name' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs |& tee -a "$Log_File"
+grep 'model name' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs
 
 # Get number of CPUs
 cpu_qty=$(grep 'physical id' /proc/cpuinfo | uniq | awk '{printf $4}')
