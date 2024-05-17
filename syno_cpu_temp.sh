@@ -90,6 +90,31 @@ if [[ ${Log,,} == "yes" ]]; then
     fi
 fi
 
+#------------------------------------------------------------------------------
+# Check latest release with GitHub API
+
+# Get latest release info
+# Curl timeout options:
+# https://unix.stackexchange.com/questions/94604/does-curl-have-a-timeout
+#release=$(curl --silent -m 10 --connect-timeout 5 \
+#    "https://api.github.com/repos/$repo/releases/latest")
+
+# Use wget to avoid installing curl in Ubuntu
+release=$(wget -qO- -q --connect-timeout=5 \
+    "https://api.github.com/repos/$repo/releases/latest")
+
+# Release version
+tag=$(echo "$release" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+#shorttag="${tag:1}"
+
+if ! printf "%s\n%s\n" "$tag" "$scriptver" |
+        sort --check=quiet --version-sort >/dev/null ; then
+    echo -e "\nThere is a newer version of this script available." |& tee -a "$Log_File"
+    echo -e "Current version: ${scriptver}\nLatest version:  $tag" |& tee -a "$Log_File"
+fi
+
+#------------------------------------------------------------------------------
+
 # Get CPU vendor
 if grep Intel /proc/cpuinfo >/dev/null; then
     vendor="Intel"
