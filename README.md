@@ -32,6 +32,12 @@ If you schedule the script in Task Scheduler you should enable logging and set t
 
 **Note:** Replace /volume1/scripts/ with the path to where the script is located.
 
+### Scheduling the script in Synology's Task Scheduler
+
+1. See <a href=how_to_schedule.md/>How to schedule a script in Synology Task Scheduler</a>
+2. Enable log and set log_directory in the included syno_cpu_temp.config
+    - syno_cpu_temp.config needs to be in the same folder as syno_cpu_temp.sh
+
 ### Troubleshooting
 
 If the script won't run check the following:
