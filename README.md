@@ -10,7 +10,11 @@
 
 Get Synology NAS CPU temperature via SSH
 
-Works for Intel and AMD CPUs in DSM 7 and DSM 6
+Works for Intel and AMD CPUs in DSM 7 and DSM 6. Also works for Synology models with more than 1 CPU.
+
+For other CPUS [create an issue](https://github.com/007revad/Synology_CPU_temperature/issues) and I'll see if I can add support for it. 
+
+If you schedule the script in Task Scheduler you should enable logging and set the log_directory in included syno_cpu_temp.config
 
 ### Download the script
 
@@ -23,7 +27,7 @@ Works for Intel and AMD CPUs in DSM 7 and DSM 6
 [How to enable SSH and login to DSM via SSH](https://kb.synology.com/en-global/DSM/tutorial/How_to_login_to_DSM_with_root_permission_via_SSH_Telnet)
 
 ```YAML
-sudo -s /volume1/scripts/syno_cpu_temp.sh
+/volume1/scripts/syno_cpu_temp.sh
 ```
 
 **Note:** Replace /volume1/scripts/ with the path to where the script is located.
@@ -53,4 +57,7 @@ If the script won't run check the following:
 
 <p align="left">Intel 2 core CPU</p>
 <p align="left"><img src="/images/intel_2core.png"></p>
+
+<p align="left">AMD Ryzen CPU log</p>
+<p align="left"><img src="/images/log.png"></p>
 
