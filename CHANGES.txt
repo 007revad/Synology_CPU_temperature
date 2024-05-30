@@ -1,3 +1,9 @@
+v2.1.4
+- Bug fix for Intel Pentium D.
+- Added support for Marvell CPUs (untested).
+- Improved formatting of output.
+- Improved formatting of log.
+
 v2.0.3
 - Added optional logging so the script can be scheduled.
   - Enable log and set log_directory in included syno_cpu_temp.config
