@@ -1,5 +1,5 @@
 v2.1.4
-- Bug fix for Intel Pentium D.
+- Bug fix for Intel Pentium D. Issue #7
 - Added support for Marvell CPUs (untested).
 - Improved formatting of output.
 - Improved formatting of log.
