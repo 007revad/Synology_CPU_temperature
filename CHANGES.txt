@@ -1,3 +1,13 @@
+v2.2.5
+- Added "Core N: " before core temp for Intel Pentium D and Xeon CPUs.
+- Bug fix for Marvell CPUs.
+- Added support for Realtek CPUs (untested).
+- Added support for Annapurna CPUs (untested).
+- Added support for STM CPUs (untested).
+- Added support for Mindspeed CPUs (untested).
+- Added support for Freescale CPUs (untested).
+- Improved formatting of output and log for AMD CPUs.
+
 v2.1.4
 - Bug fix for Intel Pentium D. Issue #7
 - Added support for Marvell CPUs (untested).
