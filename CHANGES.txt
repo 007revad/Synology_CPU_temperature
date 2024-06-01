@@ -1,3 +1,6 @@
+v2.2.6
+- Bug fix for getting Marvell CPU model.
+
 v2.2.5
 - Added "Core N: " before core temp for Intel Pentium D and Xeon CPUs.
 - Bug fix for Marvell CPUs.
