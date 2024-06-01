@@ -39,7 +39,7 @@
 # ???
 #
 # https://chainsawonatireswing.com/2012/01/07/find-out-which-cpu-your-synology-diskstation-uses/
-# Marvell
+# Marvell PJ4Bv7 Processor rev 2 (v71)
 # T-junction: 44 °C
 #
 # Annapurna
@@ -55,7 +55,7 @@
 # ???
 #----------------------------------------------------------
 
-scriptver="v2.2.5"
+scriptver="v2.2.6"
 script=Synology_CPU_temp
 repo="007revad/Synology_CPU_temp"
 scriptname=syno_cpu_temp
@@ -129,6 +129,12 @@ fi
 
 #------------------------------------------------------------------------------
 
+# Get CPU model
+cpu_model=$(grep -E '^model name' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)
+if [[ -n $cpu_model ]]; then
+    cpu_model=$(grep -E '^Processor' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)
+fi
+
 # Get CPU max temp (high threshold)
 max=$(grep . /sys/class/hwmon/hwmon*/temp*_max 2>/dev/null | cut -d":" -f2 | uniq)
 crit=$(grep . /sys/class/hwmon/hwmon*/temp*_crit 2>/dev/null | cut -d":" -f2 | uniq)
@@ -148,7 +154,11 @@ if [[ ${Log,,} == "yes" ]]; then
         echo -e "${model} DSM $productversion-$buildnumber$smallfix $buildphase" >> "$Log_File"
         # Log CPU model
         echo >> "$Log_File"
-        grep 'model name' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs >> "$Log_File"
+        if [[ -n $cpu_model ]]; then
+            echo "$cpu_model" >> "$Log_File"
+        else
+            echo "Unknown CPU model" >> "$Log_File"
+        fi
         # Log CPU max temp (high threshold)
         if [[ -n $maxtemp ]]; then echo "$maxtemp" | xargs >> "$Log_File"; fi
     fi
