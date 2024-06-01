@@ -1,5 +1,6 @@
 v2.2.5
 - Added "Core N: " before core temp for Intel Pentium D and Xeon CPUs.
+- Bug fix for Marvell CPUs.
 - Added support for Realtek CPUs (untested).
 - Added support for Annapurna CPUs (untested).
 - Added support for STM CPUs (untested).
