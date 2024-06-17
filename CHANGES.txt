@@ -1,3 +1,8 @@
+v2.3.7
+- Added Fahrenheit for those who don't use Celsius.
+- Improved formatting of output.
+- Improved formatting of log.
+
 v2.2.6
 - Bug fix for getting Marvell CPU model.
 
