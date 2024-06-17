@@ -53,6 +53,8 @@ Log=yes
 Log_Directory="/volume1/backups/diskstation/logs"
 ```
 
+**Note:** Replace /volume1/backups/diskstation/logs with the path to where you want the log saved.
+
 ### Troubleshooting
 
 If the script won't run check the following:
