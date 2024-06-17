@@ -1,5 +1,6 @@
 v2.3.7
 - Added Fahrenheit for those who don't use Celsius.
+- Renamed syno_cpu_temp.config to syno_cpu_temp.conf
 - Improved formatting of output.
 - Improved formatting of log.
 
