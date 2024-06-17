@@ -45,6 +45,15 @@ If you schedule the script in Task Scheduler you should enable logging and set t
 2. Enable log and set log_directory in the included syno_cpu_temp.conf
     - syno_cpu_temp.conf needs to be in the same folder as syno_cpu_temp.sh
 
+### Enabling logging
+
+To enable logging edit the included syno_cpu_temp.conf
+
+```YAML
+Log=yes
+Log_Directory="/volume1/backups/diskstation/logs"
+```
+
 ### Troubleshooting
 
 If the script won't run check the following:
