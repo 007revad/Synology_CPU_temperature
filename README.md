@@ -19,7 +19,7 @@ v2.1.4 and later also should work for Marvell CPUs.
 
 - For other CPUS [create an issue](https://github.com/007revad/Synology_CPU_temperature/issues) and I'll see if I can add support for it. 
 
-If you schedule the script in Task Scheduler you should enable logging and set the log_directory in included syno_cpu_temp.config
+If you schedule the script in Task Scheduler you should enable logging and set the log_directory in included syno_cpu_temp.conf
 
 ### Download the script
 
