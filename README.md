@@ -42,8 +42,8 @@ If you schedule the script in Task Scheduler you should enable logging and set t
 #### Or you can schedule the script in Synology's Task Scheduler
 
 1. See <a href=how_to_schedule.md/>How to schedule a script in Synology Task Scheduler</a>
-2. Enable log and set log_directory in the included syno_cpu_temp.config
-    - syno_cpu_temp.config needs to be in the same folder as syno_cpu_temp.sh
+2. Enable log and set log_directory in the included syno_cpu_temp.conf
+    - syno_cpu_temp.conf needs to be in the same folder as syno_cpu_temp.sh
 
 ### Troubleshooting
 
@@ -63,14 +63,20 @@ If the script won't run check the following:
 ### Screenshots
 
 <p align="left">AMD Ryzen CPU</p>
-<p align="left"><img src="/images/amd.png"></p>
+<p align="left"><img src="/images/amd-3.png"></p>
 
 <p align="left">Intel 4 core CPU</p>
-<p align="left"><img src="/images/intel_4core.png"></p>
+<p align="left"><img src="/images/intel_4core-3.png"></p>
 
 <p align="left">Intel 2 core CPU</p>
-<p align="left"><img src="/images/intel_2core.png"></p>
+<p align="left"><img src="/images/intel_2core-3.png"></p>
 
 <p align="left">AMD Ryzen CPU log</p>
-<p align="left"><img src="/images/log.png"></p>
+<p align="left"><img src="/images/amd-log.png"></p>
+
+<p align="left">Intel 4 core CPU log</p>
+<p align="left"><img src="/images/celeron-log.png"></p>
+
+<p align="left">Intel 2 core CPU log</p>
+<p align="left"><img src="/images/atom-log.png"></p>
 
