@@ -13,11 +13,10 @@ Get Synology NAS CPU temperature via SSH
 - In DSM 7 the CPU temperature is shown as "Thermal status" in "Control Panel > Info".
 - Active Insight, and DSM 6, refer to CPU temperature as "System temperature".
 
-Works for Intel and AMD CPUs in DSM 7 and DSM 6. Also works for Synology models with more than 1 CPU.
+Works for Intel, AMD and Marvell CPUs in DSM 7 and DSM 6. Also works for Synology models with more than 1 CPU.
 
-v2.1.4 and later also should work for Marvell CPUs.
-
-- For other CPUS [create an issue](https://github.com/007revad/Synology_CPU_temperature/issues) and I'll see if I can add support for it. 
+- v2.2.5 and later may work for Realtek, Annapurna, STM, Mindspeed and Freescale CPUs.
+- To report any problems [create an issue](https://github.com/007revad/Synology_CPU_temperature/issues) and I'll add support for your CPU. 
 
 If you schedule the script in Task Scheduler you should enable logging and set the log_directory in included syno_cpu_temp.conf
 
