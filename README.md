@@ -13,13 +13,12 @@ Get Synology NAS CPU temperature via SSH
 - In DSM 7 the CPU temperature is shown as "Thermal status" in "Control Panel > Info".
 - Active Insight, and DSM 6, refer to CPU temperature as "System temperature".
 
-Works for Intel and AMD CPUs in DSM 7 and DSM 6. Also works for Synology models with more than 1 CPU.
+Works for Intel, AMD and Marvell CPUs in DSM 7 and DSM 6. Also works for Synology models with more than 1 CPU.
 
-v2.1.4 and later also should work for Marvell CPUs.
+- v2.2.5 and later may work for Realtek, Annapurna, STM, Mindspeed and Freescale CPUs.
+- To report any problems [create an issue](https://github.com/007revad/Synology_CPU_temperature/issues) and I'll add support for your CPU. 
 
-- For other CPUS [create an issue](https://github.com/007revad/Synology_CPU_temperature/issues) and I'll see if I can add support for it. 
-
-If you schedule the script in Task Scheduler you should enable logging and set the log_directory in included syno_cpu_temp.config
+If you schedule the script in Task Scheduler you should enable logging and set the log_directory in included syno_cpu_temp.conf
 
 ### Download the script
 
@@ -42,8 +41,19 @@ If you schedule the script in Task Scheduler you should enable logging and set t
 #### Or you can schedule the script in Synology's Task Scheduler
 
 1. See <a href=how_to_schedule.md/>How to schedule a script in Synology Task Scheduler</a>
-2. Enable log and set log_directory in the included syno_cpu_temp.config
-    - syno_cpu_temp.config needs to be in the same folder as syno_cpu_temp.sh
+2. Enable log and set log_directory in the included syno_cpu_temp.conf
+    - syno_cpu_temp.conf needs to be in the same folder as syno_cpu_temp.sh
+
+### Enabling logging
+
+To enable logging edit the included syno_cpu_temp.conf
+
+```YAML
+Log=yes
+Log_Directory="/volume1/backups/diskstation/logs"
+```
+
+**Note:** Replace /volume1/backups/diskstation/logs with the path to where you want the log saved.
 
 ### Troubleshooting
 
@@ -63,14 +73,20 @@ If the script won't run check the following:
 ### Screenshots
 
 <p align="left">AMD Ryzen CPU</p>
-<p align="left"><img src="/images/amd.png"></p>
+<p align="left"><img src="/images/amd-3.png"></p>
 
 <p align="left">Intel 4 core CPU</p>
-<p align="left"><img src="/images/intel_4core.png"></p>
+<p align="left"><img src="/images/intel_4core-3.png"></p>
 
 <p align="left">Intel 2 core CPU</p>
-<p align="left"><img src="/images/intel_2core.png"></p>
+<p align="left"><img src="/images/intel_2core-3.png"></p>
 
 <p align="left">AMD Ryzen CPU log</p>
-<p align="left"><img src="/images/log.png"></p>
+<p align="left"><img src="/images/amd-log.png"></p>
+
+<p align="left">Intel 4 core CPU log</p>
+<p align="left"><img src="/images/celeron-log.png"></p>
+
+<p align="left">Intel 2 core CPU log</p>
+<p align="left"><img src="/images/atom-log.png"></p>
 

@@ -1,3 +1,11 @@
+v2.3.7
+- Added DSM shutdown temperature.
+- Added Fahrenheit for those who don't use Celsius.
+- Renamed syno_cpu_temp.config to syno_cpu_temp.conf
+- Improved formatting of output.
+- Improved formatting of log.
+- Bug fix for getting CPU model.
+
 v2.2.6
 - Bug fix for getting Marvell CPU model.
 
