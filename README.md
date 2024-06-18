@@ -18,7 +18,7 @@ Works for Intel, AMD and Marvell CPUs in DSM 7 and DSM 6. Also works for Synolog
 - v2.2.5 and later may work for Realtek, Annapurna, STM, Mindspeed and Freescale CPUs.
 - To report any problems [create an issue](https://github.com/007revad/Synology_CPU_temperature/issues) and I'll add support for your CPU. 
 
-If you schedule the script in Task Scheduler you should enable logging and set the log_directory in included syno_cpu_temp.conf
+If you schedule the script in Task Scheduler you should enable logging and set the log_directory in the included syno_cpu_temp.conf
 
 ### Download the script
 
