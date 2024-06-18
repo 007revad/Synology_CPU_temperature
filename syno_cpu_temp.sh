@@ -80,6 +80,42 @@ fi
 
 #------------------------------------------------------------------------------
 
+pad_len(){ 
+    #echo ${1}   # debug
+    #echo ${#1}  # debug
+
+    if [[ ${#1} -eq "1" ]]; then
+        pad="  "
+    elif [[ ${#1} -eq "2" ]]; then
+        pad=" "
+    else
+        pad=""
+    fi
+}
+
+# shellcheck disable=SC2329  # Don't warn This function is never invoked
+pad_len_amd(){ 
+    #echo ${1}   # debug
+    #echo ${#1}  # debug
+
+    # AMD k10 temps can have 3 decimal places
+    if [[ ${#1} -eq "1" ]]; then
+        pad="      "
+    elif [[ ${#1} -eq "2" ]]; then
+        pad="     "
+    elif [[ ${#1} -eq "3" ]]; then
+        pad="    "
+    elif [[ ${#1} -eq "4" ]]; then
+        pad="   "
+    elif [[ ${#1} -eq "5" ]]; then
+        pad="  "
+    elif [[ ${#1} -eq "6" ]]; then
+        pad=" "
+    else
+        pad=""
+    fi
+}
+
 c2f(){ 
     # Celsius to Fahrenheit 
     # F = (C x 9/5) + 32
@@ -130,11 +166,24 @@ max=$(grep . /sys/class/hwmon/hwmon*/temp*_max 2>/dev/null | cut -d":" -f2 | uni
 crit=$(grep . /sys/class/hwmon/hwmon*/temp*_crit 2>/dev/null | cut -d":" -f2 | uniq)
 marvl=$(cat /sys/class/hwmon/hwmon0/device/temp1_max 2>/dev/null)
 if [[ -n $max ]]; then
-    maxtemp="Max temp threshold: $((max /1000))°C  $(c2f $((max /1000)))°F"
+    #maxtemp="Max temp threshold: $((max /1000))°C  $(c2f $((max /1000)))°F"
+    pad_len "$((max /1000))"
+    max_temp="$((max /1000))°C"
+    max_tempf="$(c2f $((max /1000)))°F"
 elif [[ -n $crit ]]; then
-    maxtemp="Critical threshold: $((crit /1000))°C  $(c2f $((crit /1000)))°F"
+    #maxtemp="Critical threshold: $((crit /1000))°C  $(c2f $((crit /1000)))°F"
+    pad_len "$((crit /1000))"
+    max_temp="$((crit /1000))°C"
+    max_tempf="$(c2f $((crit /1000)))°F"
+
 elif [[ -n $marvl ]]; then
-    maxtemp="Max temp threshold: ${max}°C  $(c2f "$max")°F"
+    #maxtemp="Max temp threshold: ${marvl}°C  $(c2f "$marvl")°F"
+    pad_len "$marvl"
+    max_temp="${marvl}°C"
+    max_tempf="$(c2f "$marvl")°F"
+fi
+if [[ ${max}${crit}${marvl} ]]; then
+    maxtemp="Max temp threshold: $max_temp $pad $max_tempf"
 fi
 
 # Get DSM shutdown temp
@@ -144,10 +193,20 @@ sdt1=$(grep -i shutdown /usr/syno/etc.defaults/scemd.xml |\
 # New style scemd.xml
 sdt2=$(grep -i shutdown_temp /usr/syno/etc.defaults/scemd.xml |\
     grep cpu | uniq | awk  '{print $(NF-1)}' |  cut -d"\"" -f2)
+
+#echo "sdt1: $sdt1"  # debug
+#echo "sdt2: $sdt2"  # debug
+#sdt2="123"          # debug test 3 digit temp  toasty
+#sdt2="9"            # debug test 1 digit temp  brrr!
+
 if [[ -n $sdt1 ]]; then
-    shutdown_temp="$sdt1"
+    pad_len "$sdt1"
+    shutdown_temp="${sdt1}°C"
+    shutdown_tempf="$(c2f "$sdt1")°F"
 elif [[ -n $sdt2 ]]; then
-    shutdown_temp="$sdt2"
+    pad_len "$sdt2"
+    shutdown_temp="${sdt2}°C"
+    shutdown_tempf="$(c2f "$sdt2")°F"
 fi
 
 if [[ ${Log,,} == "yes" ]]; then
@@ -163,10 +222,10 @@ if [[ ${Log,,} == "yes" ]]; then
             echo "Unknown CPU model" >> "$Log_File"
         fi
         # Log CPU max temp (high threshold)
-        if [[ -n $maxtemp ]]; then echo "$maxtemp" | xargs >> "$Log_File"; fi
+        if [[ -n $maxtemp ]]; then echo "$maxtemp" >> "$Log_File"; fi
         # Log DSM shutdown temp
         if [[ -n $shutdown_temp ]]; then
-            echo "DSM shutdown Temp:  ${shutdown_temp}°C  $(c2f "$shutdown_temp")°F" >> "$Log_File"
+            echo "DSM shutdown Temp:  $shutdown_temp $pad $shutdown_tempf" >> "$Log_File"
         fi
         echo "" >> "$Log_File"
     fi
@@ -220,7 +279,7 @@ if [[ -n $maxtemp ]]; then echo "$maxtemp"; fi
 
 # Show DSM shutdown temp
 if [[ -n $shutdown_temp ]]; then
-    echo "DSM shutdown Temp:  ${shutdown_temp}°C  $(c2f "$shutdown_temp")°F"
+    echo "DSM shutdown Temp:  $shutdown_temp $pad $shutdown_tempf"
 fi
 
 # Get number of CPUs
@@ -236,10 +295,10 @@ show_cpu_number(){
         echo -e "[CPU $c]" >> "$Log_File"
         echo -e "\n[CPU $c]"
     else
-        if [[ ${vendor,,} != "amd" ]]; then
+        #if [[ ${vendor,,} != "amd" ]]; then
             #echo "" |& tee -a "$Log_File"
             echo ""
-        fi
+        #fi
     fi
 }
 
@@ -284,9 +343,19 @@ show_amd_temps(){
         if [[ -f "${1}$c/name" ]]; then
             echo -n "${now}" >> "$Log_File"
             printf %s "$(cat "${1}$c/name"):  " |& tee -a "$Log_File"
-            ctmp="$(awk '{printf $1/1000}' "${1}$c/temp1_input")"
-            ftmp="$(c2f "$ctmp")"
-            echo "${ctmp}°C  ${ftmp}°F" |& tee -a "$Log_File"
+
+            #ctmp="$(awk '{printf $1/1000}' "${1}$c/temp1_input")"
+            #ftmp="$(c2f "$ctmp")"
+            #echo "${ctmp}°C  ${ftmp}°F" |& tee -a "$Log_File"
+
+            ctmp1="$(awk '{printf $1/1000}' "${1}$c/temp1_input")"
+            pad_len_amd "$ctmp1"
+            ctmp="${ctmp1}°C"
+            ftmp="$(c2f "$ctmp")°F"
+            # Show k10 temp
+            echo "$ctmp   $ftmp"
+            # Log k10 temp
+            echo "$ctmp $pad $ftmp" >> "$Log_File"
         fi
         c=$((c +1))
     done
