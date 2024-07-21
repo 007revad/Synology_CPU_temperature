@@ -6,7 +6,7 @@
 # Script verified at https://www.shellcheck.net/
 #----------------------------------------------------------
 
-scriptver="v2.3.7"
+scriptver="v2.3.8"
 script=Synology_CPU_temp
 repo="007revad/Synology_CPU_temp"
 scriptname=syno_cpu_temp
@@ -28,6 +28,9 @@ smallfixnumber=$(/usr/syno/bin/synogetkeyvalue /etc.defaults/VERSION smallfixnum
 if [[ $buildphase == GM ]]; then buildphase=""; fi
 if [[ $smallfixnumber -gt "0" ]]; then smallfix="-$smallfixnumber"; fi
 echo -e "${model} DSM $productversion-$buildnumber$smallfix $buildphase"
+
+# Show CPU arch
+synogetkeyvalue /etc.defaults/synoinfo.conf unique
 
 # Get DSM major version
 dsm=$(get_key_value /etc.defaults/VERSION majorversion)
@@ -94,6 +97,7 @@ pad_len(){
 }
 
 # shellcheck disable=SC2329  # Don't warn This function is never invoked
+# shellcheck disable=SC2317  # Don't warn Command appears unreachable
 pad_len_amd(){ 
     #echo ${1}   # debug
     #echo ${#1}  # debug
@@ -148,6 +152,7 @@ c2f(){
 }
 
 # shellcheck disable=SC2329  # Don't warn This function is never invoked
+# shellcheck disable=SC2317  # Don't warn Command appears unreachable
 f2c(){ 
     # Fahrenheit to Celsius - not used
     # C = (F – 32) x 5/9
@@ -159,6 +164,16 @@ f2c(){
 cpu_model=$(grep -E '^model name' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)
 if [[ -z $cpu_model ]]; then
     cpu_model=$(grep -E '^Processor' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)
+fi
+if [[ -z $cpu_model ]]; then
+    cpu_model=$(synogetkeyvalue /etc.defaults/synoinfo.conf unique | cut -d"_" -f2)
+fi
+
+# Failed to get CPU model
+if [[ -z $cpu_model ]]; then
+    echo "Your CPU is not supported yet." |& tee -a "$Log_File"
+    echo "Create a Github issue to get your CPU added." |& tee -a "$Log_File"
+    exit
 fi
 
 # Get CPU max temp (high threshold)
@@ -243,7 +258,10 @@ elif grep AMD /proc/cpuinfo >/dev/null; then
     style="amd"
 elif grep Realtek /proc/cpuinfo >/dev/null; then
     vendor="Realtek"
-    style="intel"
+    style="realtek"
+elif [[ $cpu_model == "rtd1619b" ]]; then
+    vendor="Realtek"
+    style="realtek"
 elif grep Marvell /proc/cpuinfo >/dev/null; then
     vendor="Marvell"
     style="marvell"
@@ -263,9 +281,9 @@ else
     vendor="$(grep 'vendor_id' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)"
 fi
 
-supported_vendors=("intel" "amd" "realtek" "marvell""annapurna" "stm" "mindspeed" "freescale")
+supported_vendors=("intel" "amd" "realtek" "marvell" "annapurna" "stm" "mindspeed" "freescale")
 
-if [[ ! ${supported_vendors[*]} =~ "${vendor,,}" ]]; then
+if [[ ! ${supported_vendors[*]} =~ ${vendor,,} ]]; then
     echo "$vendor not supported yet." |& tee -a "$Log_File"
     echo "Create a Github issue to get $vendor CPUs added." |& tee -a "$Log_File"
     exit
@@ -287,6 +305,7 @@ cpu_qty=$(grep 'physical id' /proc/cpuinfo | uniq | awk '{printf $4}')
 #cpu_qty=$((cpu_qty +1))  # test multiple CPUs
 
 # shellcheck disable=SC2329  # Don't warn This function is never invoked
+# shellcheck disable=SC2317  # Don't warn Command appears unreachable
 show_cpu_number(){ 
     # echo [CPU 0] or [CPU 1] etc if more than 1 CPU
     if [[ $cpu_qty -gt "0" ]]; then
@@ -303,6 +322,7 @@ show_cpu_number(){
 }
 
 # shellcheck disable=SC2329  # Don't warn This function is never invoked
+# shellcheck disable=SC2317  # Don't warn Command appears unreachable
 show_intel_temps(){ 
     # $1 for DSM 7 is "/sys/class/hwmon/hwmon"
     # $1 for DSM 6 is "/sys/bus/platform/devices/coretemp."
@@ -332,6 +352,7 @@ show_intel_temps(){
 }
 
 # shellcheck disable=SC2329  # Don't warn This function is never invoked
+# shellcheck disable=SC2317  # Don't warn Command appears unreachable
 show_amd_temps(){ 
     # $1 for DSM 7 is "/sys/class/hwmon/hwmon"
     # $1 for DSM 6 is "/sys/bus/platform/devices/coretemp."
@@ -362,6 +383,7 @@ show_amd_temps(){
 }
 
 # shellcheck disable=SC2329  # Don't warn This function is never invoked
+# shellcheck disable=SC2317  # Don't warn Command appears unreachable
 show_marvell_temps(){ 
     # $1 for DSM 7 is "/sys/class/hwmon/hwmon0/device"
     # $1 for DSM 6 is "/sys/bus/platform/devices/coretemp." ???
@@ -376,8 +398,33 @@ show_marvell_temps(){
     fi
 }
 
+# shellcheck disable=SC2329  # Don't warn This function is never invoked
+# shellcheck disable=SC2317  # Don't warn Command appears unreachable
+show_realtek_temps(){ 
+    # $1 for DSM 7 is "/sys/class/hwmon/hwmon0/device"
+    # $1 for DSM 6 is "/sys/bus/platform/devices/coretemp." ???
+
+    # Show cpu_thermal temp
+    if [[ -f "${1}/type" ]]; then
+        echo -n "${now}" >> "$Log_File"
+        printf %s "$(cat "${1}/type"):  " |& tee -a "$Log_File"
+        ctmp1="$(awk '{printf $1/1000}' "${1}/temp")"
+        pad_len_amd "$ctmp1"
+        ctmp="${ctmp1}°C"
+        ftmp="$(c2f "$ctmp")°F"
+        # Show k10 temp
+        echo "$ctmp   $ftmp"
+        # Log k10 temp
+        echo "$ctmp $pad $ftmp" >> "$Log_File"
+
+    fi
+}
+
+
 if [[ $dsm -gt "6" ]]; then
-    if [[ $style == "marvell" ]]; then
+    if [[ $style == "realtek" ]]; then
+        show_"${style}"_temps "/sys/class/thermal/thermal_zone0"
+    elif [[ $style == "marvell" ]]; then
         show_"${style}"_temps "/sys/class/hwmon/hwmon0/device"
     else
         show_"${style}"_temps "/sys/class/hwmon/hwmon"
