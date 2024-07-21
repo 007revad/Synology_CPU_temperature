@@ -1,3 +1,6 @@
+v2.3.8
+- Fixed support for Realtek CPUs.
+
 v2.3.7
 - Added DSM shutdown temperature.
 - Added Fahrenheit for those who don't use Celsius.
