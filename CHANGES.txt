@@ -1,5 +1,5 @@
 v2.3.9
-- Bug fix for old Intel CPUs running DSM 7. issue #18
+- Bug fix for old Intel CPUs running DSM 7. Issue #18
 
 v2.3.8
 - Fixed support for Realtek CPUs.
