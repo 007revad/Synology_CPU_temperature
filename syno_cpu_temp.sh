@@ -6,7 +6,7 @@
 # Script verified at https://www.shellcheck.net/
 #----------------------------------------------------------
 
-scriptver="v2.3.8"
+scriptver="v2.3.9"
 script=Synology_CPU_temp
 repo="007revad/Synology_CPU_temp"
 scriptname=syno_cpu_temp
@@ -47,9 +47,8 @@ fi
 # Check if backup directory exists
 if [[ ${Log,,} == "yes" ]]; then
     if [[ ! -d $Log_Directory ]]; then
-        echo "Log directory not found:"
-        echo "$Log_Directory"
-        echo "Check your setting in syno_cpu_temp.conf"
+        echo -e "\nWARNING Log directory not found: $Log_Directory"
+        echo -e "Check your setting in syno_cpu_temp.conf\n"
         exit 1
     else
         echo -e "Logging to $Log_Directory\n"
@@ -155,7 +154,7 @@ c2f(){
 # shellcheck disable=SC2317  # Don't warn Command appears unreachable
 f2c(){ 
     # Fahrenheit to Celsius - not used
-    # C = (F – 32) x 5/9
+    # C = (F - 32) x 5/9
     #c=$(($((1 -32)) * 1.8))
     echo "$f"
 }
@@ -326,6 +325,7 @@ show_cpu_number(){
 show_intel_temps(){ 
     # $1 for DSM 7 is "/sys/class/hwmon/hwmon"
     # $1 for DSM 6 is "/sys/bus/platform/devices/coretemp."
+    # $2 is "/device" or null
     c=0
     while [[ ! $c -gt $cpu_qty ]]; do
         show_cpu_number
@@ -333,15 +333,15 @@ show_intel_temps(){
         x=1
         while [ "$x" -lt $(($(nproc) +2)) ]; do
             # Show core $x temp for CPU $c
-            if [ -f "${1}$c/temp${x}_input" ]; then
+            if [ -f "${1}$c${2}/temp${x}_input" ]; then
                 echo -n "${now}" >> "$Log_File"
-                if [ -f "${1}$c/temp${x}_label" ]; then
-                    printf %s "$(cat "${1}$c/temp${x}_label"): " |& tee -a "$Log_File"
+                if [ -f "${1}$c${2}/temp${x}_label" ]; then
+                    printf %s "$(cat "${1}$c${2}/temp${x}_label"): " |& tee -a "$Log_File"
                 else
                     # Some Intel CPUs don't have tempN_label
                     echo -n "Core $((x -1)): " |& tee -a "$Log_File"
                 fi
-                ctmp="$(awk '{printf $1/1000}' "${1}$c/temp${x}_input")"
+                ctmp="$(awk '{printf $1/1000}' "${1}$c${2}/temp${x}_input")"
                 ftmp="$(c2f "$ctmp")"
                 echo "${ctmp}°C  ${ftmp}°F" |& tee -a "$Log_File"
             fi
@@ -421,16 +421,17 @@ show_realtek_temps(){
 }
 
 
-if [[ $dsm -gt "6" ]]; then
+if [[ $dsm -ge "6" ]]; then
     if [[ $style == "realtek" ]]; then
         show_"${style}"_temps "/sys/class/thermal/thermal_zone0"
     elif [[ $style == "marvell" ]]; then
         show_"${style}"_temps "/sys/class/hwmon/hwmon0/device"
     else
-        show_"${style}"_temps "/sys/class/hwmon/hwmon"
+        if [[ -f "/sys/class/hwmon/hwmon0/device/temp2_input" ]]; then
+            device="/device"
+        fi
+        show_"${style}"_temps "/sys/class/hwmon/hwmon" "$device"
     fi
-elif [[ $dsm -eq "6" ]]; then
-    show_"${style}"_temps "/sys/bus/platform/devices/coretemp."
 else
     echo "Unknown or unsupported DSM version ${dsm}!" |& tee -a "$Log_File"
 fi
