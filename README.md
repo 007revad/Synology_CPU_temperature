@@ -18,7 +18,7 @@ Works for Intel, AMD, Realtek RTD1619B and Marvell CPUs in DSM 7 and DSM 6. Also
 - v2.2.5 and later may work for Annapurna, STM, Mindspeed and Freescale CPUs.
 - To report any problems [create an issue](https://github.com/007revad/Synology_CPU_temperature/issues) and I'll add support for your CPU. 
 
-**Realtek RTD129x CPU NOTE:** Synology NAS with a Realtek RTD1296 or RTD1293 CPU always show 40°C. Affected models are DS420j, DS220j, RS819, DS418, DS418j, DS218, DS218play and DS118. Source [TN-Notebooks](https://www.synology-forum.de/threads/ds218-blinkt-nur-blau-reparatur-infos.131461/#post-1144055)
+**NOTE for Realtek RTD129x CPUs:** Synology NAS with a Realtek RTD1296 or RTD1293 CPU always show 40°C. Affected models are DS420j, DS220j, RS819, DS418, DS418j, DS218, DS218play and DS118. Source [TN-Notebooks](https://www.synology-forum.de/threads/ds218-blinkt-nur-blau-reparatur-infos.131461/#post-1144055)
 
 If you schedule the script in Task Scheduler you should enable logging and set the log_directory in the included syno_cpu_temp.conf
 
