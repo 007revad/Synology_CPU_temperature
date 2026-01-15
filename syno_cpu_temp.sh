@@ -6,7 +6,7 @@
 # Script verified at https://www.shellcheck.net/
 #----------------------------------------------------------
 
-scriptver="v2.3.9"
+scriptver="v2.3.10"
 script=Synology_CPU_temp
 repo="007revad/Synology_CPU_temp"
 scriptname=syno_cpu_temp
@@ -206,7 +206,7 @@ sdt1=$(grep -i shutdown /usr/syno/etc.defaults/scemd.xml |\
     grep cpu_temperature | uniq | cut -d">" -f2 | cut -d"<" -f1)
 # New style scemd.xml
 sdt2=$(grep -i shutdown_temp /usr/syno/etc.defaults/scemd.xml |\
-    grep cpu | uniq | awk  '{print $(NF-1)}' |  cut -d"\"" -f2)
+    grep cpu | uniq | awk '{print $(NF-1)}' | cut -d"\"" -f2)
 
 #echo "sdt1: $sdt1"  # debug
 #echo "sdt2: $sdt2"  # debug
@@ -273,9 +273,12 @@ elif grep STM /proc/cpuinfo >/dev/null; then
 elif grep Mindspeed /proc/cpuinfo >/dev/null; then
     vendor="Mindspeed"
     style="intel"
-elif grep Freescale /proc/cpuinfo >/dev/null; then
+elif grep -E 'Freescale|e500v2|P1022' /proc/cpuinfo >/dev/null; then
     vendor="Freescale"
-    style="intel"
+    style="freescale"
+elif [[ $cpu_model == "qoriq" ]]; then
+    vendor="Freescale"
+    style="freescale"
 else
     vendor="$(grep 'vendor_id' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)"
 fi
@@ -420,12 +423,29 @@ show_realtek_temps(){
     fi
 }
 
+# shellcheck disable=SC2329  # Don't warn This function is never invoked
+# shellcheck disable=SC2317  # Don't warn Command appears unreachable
+show_freescale_temps(){ 
+    # $1 is "/tmp/.syno_temp_cache"
+
+    # Show T-junction temp
+    if [[ -f "${1}" ]]; then
+        echo -n "${now}" >> "$Log_File"
+        echo -n "CPU:  " |& tee -a "$Log_File"
+        ctmp="$(printf %s "$(cat "${1}")")"
+        ftmp="$(c2f "$ctmp")"
+        echo "${ctmp}°C  ${ftmp}°F" |& tee -a "$Log_File"
+    fi
+}
+
 
 if [[ $dsm -ge "6" ]]; then
     if [[ $style == "realtek" ]]; then
         show_"${style}"_temps "/sys/class/thermal/thermal_zone0"
     elif [[ $style == "marvell" ]]; then
         show_"${style}"_temps "/sys/class/hwmon/hwmon0/device"
+    elif [[ $style == "freescale" ]]; then
+        show_"${style}"_temps "/tmp/.syno_temp_cache"
     else
         if [[ -f "/sys/class/hwmon/hwmon0/device/temp2_input" ]]; then
             device="/device"
@@ -439,4 +459,3 @@ fi
 echo ""
 
 exit
-
