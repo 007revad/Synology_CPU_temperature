@@ -6,7 +6,7 @@
 # Script verified at https://www.shellcheck.net/
 #----------------------------------------------------------
 
-scriptver="v2.3.10"
+scriptver="v2.3.11"
 script=Synology_CPU_temp
 repo="007revad/Synology_CPU_temp"
 scriptname=syno_cpu_temp
@@ -179,6 +179,7 @@ fi
 max=$(grep . /sys/class/hwmon/hwmon*/temp*_max 2>/dev/null | cut -d":" -f2 | uniq)
 crit=$(grep . /sys/class/hwmon/hwmon*/temp*_crit 2>/dev/null | cut -d":" -f2 | uniq)
 marvl=$(cat /sys/class/hwmon/hwmon0/device/temp1_max 2>/dev/null)
+freescale=$(cat /usr/syno/etc.defaults/scemd.xml | grep -i 'shutdown' | grep -i '</temperature>' | uniq | cut -d">" -f2 | cut -d"<" -f1)
 if [[ -n $max ]]; then
     #maxtemp="Max temp threshold: $((max /1000))°C  $(c2f $((max /1000)))°F"
     pad_len "$((max /1000))"
@@ -195,8 +196,13 @@ elif [[ -n $marvl ]]; then
     pad_len "$marvl"
     max_temp="${marvl}°C"
     max_tempf="$(c2f "$marvl")°F"
+elif [[ -n $freescale ]]; then
+    #maxtemp="Max temp threshold: ${freescale}°C  $(c2f "$freescale")°F"
+    pad_len "$freescale"
+    max_temp="${freescale}°C"
+    max_tempf="$(c2f "$freescale")°F"
 fi
-if [[ ${max}${crit}${marvl} ]]; then
+if [[ ${max}${crit}${marvl}${freescale} ]]; then
     maxtemp="Max temp threshold: $max_temp $pad $max_tempf"
 fi
 
