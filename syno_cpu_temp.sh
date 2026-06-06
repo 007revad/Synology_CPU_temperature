@@ -6,7 +6,7 @@
 # Script verified at https://www.shellcheck.net/
 #----------------------------------------------------------
 
-scriptver="v2.3.11"
+scriptver="v2.3.12"
 script=Synology_CPU_temp
 repo="007revad/Synology_CPU_temp"
 scriptname=syno_cpu_temp
@@ -160,13 +160,13 @@ f2c(){
 }
 
 # Get CPU model
-cpu_model=$(grep -E '^model name' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)
-if [[ -z $cpu_model ]]; then
-    cpu_model=$(grep -E '^Processor' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)
-fi
-if [[ -z $cpu_model ]]; then
+#cpu_model=$(grep -E '^model name' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)
+#if [[ -z $cpu_model ]]; then
+#    cpu_model=$(grep -E '^Processor' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)
+#fi
+#if [[ -z $cpu_model ]]; then
     cpu_model=$(synogetkeyvalue /etc.defaults/synoinfo.conf unique | cut -d"_" -f2)
-fi
+#fi
 
 # Failed to get CPU model
 if [[ -z $cpu_model ]]; then
@@ -264,7 +264,7 @@ elif grep AMD /proc/cpuinfo >/dev/null; then
 elif grep Realtek /proc/cpuinfo >/dev/null; then
     vendor="Realtek"
     style="realtek"
-elif [[ $cpu_model == "rtd1619b" ]]; then
+elif [[ $cpu_model =~ ^rtd[0-9][0-9][0-9][0-9] ]]; then
     vendor="Realtek"
     style="realtek"
 elif grep Marvell /proc/cpuinfo >/dev/null; then
@@ -288,6 +288,14 @@ elif [[ $cpu_model == "qoriq" ]]; then
 else
     vendor="$(grep 'vendor_id' /proc/cpuinfo | uniq | cut -d":" -f2 | xargs)"
 fi
+
+
+#echo ""
+#echo "DEBUG: cpu_model: $cpu_model"  # debug ###################################
+#echo "DEBUG: vendor:    $vendor"     # debug ###################################
+#echo "DEBUG: stylel:    $style"      # debug ###################################
+#echo ""
+
 
 supported_vendors=("intel" "amd" "realtek" "marvell" "annapurna" "stm" "mindspeed" "freescale")
 

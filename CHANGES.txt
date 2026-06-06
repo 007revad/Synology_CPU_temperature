@@ -1,3 +1,6 @@
+v2.3.12
+- Bug fix for Realtek RTD1296 CPU.
+
 v2.3.11
 - Added Shutdown temperature for Freescale CPUs. Issue #25
 
